@@ -21,7 +21,7 @@ model AdmissionData {
   majorNote           String?  @map("major_note")
   admissionCount      String?  @map("admission_count")
   minScore            Int?     @map("min_score")
-  minRank             String?  @map("min_rank")
+  minRank             Int?     @map("min_rank")
   schoolLocation      String   @map("school_location")
   schoolNature        String   @map("school_nature")
   is985               Boolean  @map("is_985")
