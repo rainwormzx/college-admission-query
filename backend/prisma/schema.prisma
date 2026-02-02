@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AdmissionData {
+  id                  Int      @id @default(autoincrement())
+  year                Int
+  universityName      String   @map("university_name")
+  universityCode      String   @map("university_code")
+  category            String
+  batch               String
+  subjectRequirement  String   @map("subject_requirement")
+  major               String
+  majorCode           String   @map("major_code")
+  majorGroup          String?  @map("major_group")
+  majorNote           String?  @map("major_note")
+  admissionCount      String?  @map("admission_count")
+  minScore            Int?     @map("min_score")
+  minRank             String?  @map("min_rank")
+  schoolLocation      String   @map("school_location")
+  schoolNature        String   @map("school_nature")
+  is985               Boolean  @map("is_985")
+  is211               Boolean  @map("is_211")
+
+  @@index([year])
+  @@index([major])
+  @@index([schoolLocation])
+  @@index([minScore])
+  @@index([universityName])
+  @@map("admission_data")
+}
