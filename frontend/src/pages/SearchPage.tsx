@@ -243,7 +243,7 @@ const SearchPage = () => {
     message.success('已重置筛选条件');
   };
 
-  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
+  const handleTableChange = (pagination: any, _filters: any, sorter: any) => {
     const newPage = pagination.current;
     const newPageSize = pagination.pageSize;
 
