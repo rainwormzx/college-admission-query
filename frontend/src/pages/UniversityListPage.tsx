@@ -11,7 +11,6 @@ import {
   Row,
   Col,
   Select,
-  Empty,
   AutoComplete
 } from 'antd';
 import {
@@ -50,11 +49,7 @@ const UniversityListPage = () => {
   const [data, setData] = useState<UniversityListResponse | null>(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
-  const [searchKeyword, setSearchKeyword] = useState('');
   const [searchOptions, setSearchOptions] = useState<{ value: string }[]>([]);
-  const [locationFilter, setLocationFilter] = useState<string | undefined>();
-  const [natureFilter, setNatureFilter] = useState<string | undefined>();
-  const [levelFilter, setLevelFilter] = useState<string | undefined>();
 
   useEffect(() => {
     fetchUniversities();

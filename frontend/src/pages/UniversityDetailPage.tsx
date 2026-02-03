@@ -14,14 +14,12 @@ import {
   Typography,
   Divider,
   Alert,
-  Progress,
   Badge
 } from 'antd';
 import {
   ArrowLeftOutlined,
   EnvironmentOutlined,
   BookOutlined,
-  TrophyOutlined,
   RiseOutlined,
   TeamOutlined
 } from '@ant-design/icons';
@@ -137,15 +135,6 @@ const UniversityDetailPage = () => {
     { title: '最低分', dataIndex: 'minScore', width: 120 },
     { title: '最高分', dataIndex: 'maxScore', width: 120 }
   ];
-
-  // 计算分数区间
-  const calculateScoreLevel = (score: number) => {
-    if (score >= 650) return { level: '高分', color: '#cf1322', percent: 100 };
-    if (score >= 600) return { level: '较高分', color: '#fa541c', percent: 85 };
-    if (score >= 550) return { level: '中等偏上', color: '#faad14', percent: 70 };
-    if (score >= 500) return { level: '中等', color: '#52c41a', percent: 55 };
-    return { level: '一般', color: '#13c2c2', percent: 40 };
-  };
 
   return (
     <div style={{ padding: '24px', maxWidth: 1400, margin: '0 auto' }}>
