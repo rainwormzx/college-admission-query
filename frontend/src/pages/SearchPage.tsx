@@ -10,10 +10,11 @@ import {
   message,
   Card
 } from 'antd';
-import { SearchOutlined, DownloadOutlined, ReloadOutlined } from '@ant-design/icons';
+import { SearchOutlined, DownloadOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import type { AdmissionData, SearchParams } from '../types';
 import { searchAdmission, exportAdmission, getLocations } from '../services/api';
+import { useTargetUniversities } from '../contexts/TargetUniversitiesContext';
 
 const { Option } = Select;
 
@@ -26,6 +27,9 @@ const SearchPage = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [locations, setLocations] = useState<string[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
+  const [selectedRecords, setSelectedRecords] = useState<AdmissionData[]>([]);
+  const { batchAddTargetUniversities } = useTargetUniversities();
 
   // 用于取消未完成的请求，防止竞态条件
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -38,7 +42,7 @@ const SearchPage = () => {
       year: searchParams.get('year')?.split(',').map(Number).filter(Boolean) || undefined,
       schoolLocation: searchParams.get('schoolLocation')?.split(',').filter(Boolean) || undefined,
       category: searchParams.get('category') || undefined,
-      subjectCategory: searchParams.get('subjectCategory') || undefined,
+      subjectCategory: searchParams.get('subjectCategory')?.split(',').filter(Boolean) || undefined,
       batch: searchParams.get('batch') || undefined,
       is985: searchParams.get('is985') === 'true' ? true : searchParams.get('is985') === 'false' ? false : undefined,
       is211: searchParams.get('is211') === 'true' ? true : searchParams.get('is211') === 'false' ? false : undefined,
@@ -69,7 +73,10 @@ const SearchPage = () => {
       newParams.schoolLocation = location;
     }
     if (params.category) newParams.category = params.category;
-    if (params.subjectCategory) newParams.subjectCategory = params.subjectCategory;
+    if (params.subjectCategory && params.subjectCategory.length > 0) {
+      const categories = Array.isArray(params.subjectCategory) ? params.subjectCategory.join(',') : params.subjectCategory;
+      newParams.subjectCategory = categories;
+    }
     if (params.batch) newParams.batch = params.batch;
     if (params.is985 !== undefined) newParams.is985 = String(params.is985);
     if (params.is211 !== undefined) newParams.is211 = String(params.is211);
@@ -153,7 +160,75 @@ const SearchPage = () => {
     }
   };
 
+  // 批量保存功能
+  const handleBatchSave = () => {
+    if (selectedRecords.length === 0) {
+      message.warning('请先选择要保存的记录');
+      return;
+    }
+
+    // 使用批量添加方法
+    const { addedCount, skippedCount } = batchAddTargetUniversities(selectedRecords);
+
+    if (addedCount > 0) {
+      message.success(
+        `成功添加 ${addedCount} 条记录${skippedCount > 0 ? `，${skippedCount} 条已存在` : ''}`
+      );
+    } else {
+      message.warning(`选中的 ${selectedRecords.length} 条记录都已存在`);
+    }
+
+    setSelectedRecords([]);
+    setSelectedRowKeys([]);
+  };
+
   const columns: ColumnsType<AdmissionData> = [
+    {
+      title: (
+        <input
+          type="checkbox"
+          checked={data.length > 0 && selectedRowKeys.length > 0 && data.every(item => selectedRowKeys.includes(item.id))}
+          onChange={(e) => {
+            if (e.target.checked) {
+              // 选中当前页所有记录，添加完整数据
+              const newRecords = [...selectedRecords];
+              data.forEach(item => {
+                if (!selectedRowKeys.includes(item.id)) {
+                  newRecords.push(item);
+                }
+              });
+              setSelectedRecords(newRecords);
+              setSelectedRowKeys(newRecords.map(r => r.id));
+            } else {
+              // 取消选中当前页所有记录
+              const currentPageIds = new Set(data.map(item => item.id));
+              setSelectedRecords(selectedRecords.filter(r => !currentPageIds.has(r.id)));
+              setSelectedRowKeys(selectedRowKeys.filter(id => !currentPageIds.has(id)));
+            }
+          }}
+        />
+      ),
+      dataIndex: 'id',
+      width: 60,
+      fixed: 'left',
+      render: (id: number, record: AdmissionData) => (
+        <input
+          type="checkbox"
+          checked={selectedRowKeys.includes(id)}
+          onChange={(e) => {
+            if (e.target.checked) {
+              // 选中时保存完整记录
+              setSelectedRecords([...selectedRecords, record]);
+              setSelectedRowKeys([...selectedRowKeys, id]);
+            } else {
+              // 取消选中时移除记录
+              setSelectedRecords(selectedRecords.filter(r => r.id !== id));
+              setSelectedRowKeys(selectedRowKeys.filter(key => key !== id));
+            }
+          }}
+        />
+      )
+    },
     { title: '年份', dataIndex: 'year', width: 70, sorter: true },
     {
       title: '院校名称',
@@ -311,9 +386,11 @@ const SearchPage = () => {
               ))}
             </Select>
             <Select
-              placeholder="学科门类"
-              style={{ width: 120 }}
+              mode="multiple"
+              placeholder="学科门类（可多选）"
+              style={{ width: 200 }}
               allowClear
+              maxTagCount="responsive"
               value={currentParams.subjectCategory}
               onChange={(value) => updateParam('subjectCategory', value)}
             >
@@ -407,6 +484,50 @@ const SearchPage = () => {
         onChange={handleTableChange}
         scroll={{ x: 1200 }}
       />
+
+      {/* 浮动保存按钮 */}
+      {selectedRowKeys.length > 0 && (
+        <div
+          style={{
+            position: 'fixed',
+            right: 24,
+            bottom: 100,
+            zIndex: 999,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+          }}
+        >
+          <Space direction="vertical" size="small">
+            <Button
+              type="primary"
+              size="large"
+              icon={<SaveOutlined />}
+              onClick={handleBatchSave}
+              style={{
+                borderRadius: 30,
+                height: 50,
+                paddingLeft: 24,
+                paddingRight: 24,
+                fontSize: 16
+              }}
+            >
+              保存选中 ({selectedRowKeys.length})
+            </Button>
+            <Button
+              size="small"
+              onClick={() => {
+                setSelectedRowKeys([]);
+                setSelectedRecords([]);
+              }}
+              style={{
+                borderRadius: 20,
+                marginLeft: 'auto'
+              }}
+            >
+              取消选择
+            </Button>
+          </Space>
+        </div>
+      )}
     </div>
   );
 };

@@ -7,7 +7,8 @@ import {
   StarOutlined,
   SwapOutlined,
   RobotOutlined,
-  UnorderedListOutlined
+  UnorderedListOutlined,
+  HeartFilled
 } from '@ant-design/icons';
 import SearchPage from './pages/SearchPage';
 import StatsPage from './pages/StatsPage';
@@ -16,6 +17,7 @@ import ComparePage from './pages/ComparePage';
 import AIAssistantPage from './pages/AIAssistantPage';
 import UniversityListPage from './pages/UniversityListPage';
 import UniversityDetailPage from './pages/UniversityDetailPage';
+import TargetUniversitiesPage from './pages/TargetUniversitiesPage';
 import LoginPage from './pages/LoginPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { useAuth } from './contexts/AuthContext';
@@ -32,6 +34,7 @@ function App() {
     const path = location.pathname;
     if (path === '/') return 'search';
     if (path.startsWith('/search')) return 'search';
+    if (path.startsWith('/target')) return 'target';
     if (path.startsWith('/stats')) return 'stats';
     if (path.startsWith('/recommend')) return 'recommend';
     if (path.startsWith('/compare')) return 'compare';
@@ -51,6 +54,12 @@ function App() {
       icon: <SearchOutlined />,
       label: '查询',
       path: '/search'
+    },
+    {
+      key: 'target',
+      icon: <HeartFilled />,
+      label: '目标院校',
+      path: '/target'
     },
     {
       key: 'stats',
@@ -134,6 +143,11 @@ function App() {
               <Route path="/search" element={
                 <ProtectedRoute>
                   <SearchPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/target" element={
+                <ProtectedRoute>
+                  <TargetUniversitiesPage />
                 </ProtectedRoute>
               } />
               <Route path="/stats" element={

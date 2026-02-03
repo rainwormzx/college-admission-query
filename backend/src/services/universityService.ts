@@ -9,6 +9,18 @@ export interface UniversityDetail {
     is985: boolean;
     is211: boolean;
   };
+  extendedInfo?: {
+    postgraduateRate?: string;
+    ranking?: number;
+    schoolType?: string;
+    affiliation?: string;
+    foundingYear?: number;
+    masterPoints?: number;
+    doctoralPoints?: number;
+    nationalSpecialMajors?: string;
+    website?: string;
+    description?: string;
+  };
   stats: {
     majorCount: number;
     admissionDataCount: number;
@@ -21,6 +33,11 @@ export interface UniversityDetail {
     minRank?: number;
     category: string;
     batch: string;
+    ranking?: {
+      rating?: string;
+      rank?: number;
+      score?: number;
+    };
   }>;
   scoreTrends: Array<{
     year: number;
@@ -55,6 +72,55 @@ export async function getUniversityByName(name: string): Promise<UniversityDetai
   if (!basicInfoData) {
     return null;
   }
+
+  // 查询扩展信息（保研率等）
+  const extendedInfoData = await prisma.$queryRaw`
+    SELECT
+      postgraduate_rate,
+      ranking,
+      school_type,
+      affiliation,
+      founding_year,
+      master_points,
+      doctoral_points,
+      national_special_majors,
+      website,
+      description
+    FROM university_details
+    WHERE university_name = ${name}
+    LIMIT 1
+  ` as Array<any>;
+
+  const extendedInfo = extendedInfoData[0] ? {
+    postgraduateRate: extendedInfoData[0].postgraduate_rate,
+    ranking: extendedInfoData[0].ranking,
+    schoolType: extendedInfoData[0].school_type,
+    affiliation: extendedInfoData[0].affiliation,
+    foundingYear: extendedInfoData[0].founding_year,
+    masterPoints: extendedInfoData[0].master_points,
+    doctoralPoints: extendedInfoData[0].doctoral_points,
+    nationalSpecialMajors: extendedInfoData[0].national_special_majors,
+    website: extendedInfoData[0].website,
+    description: extendedInfoData[0].description
+  } : undefined;
+
+  // 查询专业排名
+  const majorRankingsData = await prisma.$queryRaw`
+    SELECT major_name, rating, ranking, score
+    FROM major_rankings
+    WHERE university_name = ${name}
+    ORDER BY ranking
+  ` as Array<{ major_name: string; rating: string; ranking: number; score: number }>;
+
+  // 构建专业排名映射
+  const rankingMap = new Map<string, { rating: string; rank: number; score: number }>();
+  majorRankingsData.forEach(r => {
+    rankingMap.set(r.major_name, {
+      rating: r.rating,
+      rank: r.ranking,
+      score: r.score
+    });
+  });
 
   // 查询统计数据
   const majors = await prisma.admissionData.findMany({
@@ -131,19 +197,28 @@ export async function getUniversityByName(name: string): Promise<UniversityDetai
       is985: basicInfoData.is985,
       is211: basicInfoData.is211
     },
+    extendedInfo,
     stats: {
       majorCount: uniqueMajors.length,
       admissionDataCount: majors.length,
       years: yearsData.map(y => y.year)
     },
-    majors: uniqueMajors.map(m => ({
-      name: m.major,
-      code: m.majorCode || '-',
-      minScore: m.minScore ?? undefined,
-      minRank: m.minRank ?? undefined,
-      category: m.category,
-      batch: m.batch
-    })),
+    majors: uniqueMajors.map(m => {
+      const ranking = rankingMap.get(m.major);
+      return {
+        name: m.major,
+        code: m.majorCode || '-',
+        minScore: m.minScore ?? undefined,
+        minRank: m.minRank ?? undefined,
+        category: m.category,
+        batch: m.batch,
+        ranking: ranking ? {
+          rating: ranking.rating,
+          rank: ranking.rank,
+          score: ranking.score
+        } : undefined
+      };
+    }),
     scoreTrends: scoreTrendsData.map(d => ({
       year: d.year,
       avgScore: Math.round(d.avg_score || 0),

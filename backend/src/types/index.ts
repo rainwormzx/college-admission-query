@@ -30,7 +30,7 @@ export interface SearchParams {
   minRank?: { min?: number; max?: number };
   year?: number[];
   category?: string;
-  subjectCategory?: string;
+  subjectCategory?: string | string[];
   batch?: string;
   is985?: boolean;
   is211?: boolean;

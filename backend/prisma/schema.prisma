@@ -36,3 +36,58 @@ model AdmissionData {
   @@index([subjectCategory])
   @@map("admission_data")
 }
+
+model UniversityDetail {
+  id                Int      @id @default(autoincrement())
+  universityName    String   @unique @map("university_name")
+  newUniversityName String?  @map("new_university_name")
+  ranking           Int?     @map("ranking")
+  province          String   @map("province")
+  city              String?  @map("city")
+  schoolType        String   @map("school_type")
+  affiliation       String?  @map("affiliation")
+  is985             Boolean  @map("is_985")
+  is211             Boolean  @map("is_211")
+  firstClassUniversity String? @map("first_class_university")
+  isArts            Boolean  @map("is_arts")
+  nationalKey       Boolean  @map("national_key")
+  publicPrivate     String   @map("public_private")
+  undergraduateGraduate String? @map("undergraduate_graduate")
+  postgraduateRate  String?  @map("postgraduate_rate")
+  nationalSpecialMajors  String? @map("national_special_majors")
+  provincialSpecialMajors String? @map("provincial_special_majors")
+  nationalKeyMajor  Boolean  @map("national_key_major")
+  worldFirstClass   String?  @map("world_first_class")
+  isDoubleFirstClass String? @map("is_double_first_class")
+  masterPoints      Int?     @map("master_points")
+  doctoralPoints    Int?     @map("doctoral_points")
+  foundingYear      Int?     @map("founding_year")
+  femaleRatio       String?  @map("female_ratio")
+  maleRatio         String?  @map("male_ratio")
+  phone             String?  @map("phone")
+  email             String?  @map("email")
+  address           String?  @map("address")
+  website           String?  @map("website")
+  evaluationResults Json?    @map("evaluation_results")
+  description       String?  @db.Text
+
+  @@index([universityName])
+  @@map("university_details")
+}
+
+model MajorRanking {
+  id            Int      @id @default(autoincrement())
+  category      String   @map("category")
+  majorClass    String   @map("major_class")
+  majorCode     String   @map("major_code")
+  majorName     String   @map("major_name")
+  rating        String   @map("rating")
+  ranking       Int      @map("ranking")
+  universityName String  @map("university_name")
+  province      String   @map("province")
+  score         Float?   @map("score")
+
+  @@index([majorName])
+  @@index([universityName])
+  @@map("major_rankings")
+}

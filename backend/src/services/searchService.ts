@@ -75,9 +75,15 @@ export const searchAdmission = async (params: SearchParams) => {
     where.category = category;
   }
 
-  // 学科门类（教育部13类）
+  // 学科门类（教育部13类，支持多选）
   if (subjectCategory) {
-    where.subjectCategory = subjectCategory;
+    if (Array.isArray(subjectCategory) && subjectCategory.length > 0) {
+      where.subjectCategory = {
+        in: subjectCategory
+      };
+    } else if (typeof subjectCategory === 'string') {
+      where.subjectCategory = subjectCategory;
+    }
   }
 
   // 批次

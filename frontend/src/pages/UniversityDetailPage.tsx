@@ -39,6 +39,18 @@ interface UniversityDetail {
     is985: boolean;
     is211: boolean;
   };
+  extendedInfo?: {
+    postgraduateRate?: string;
+    ranking?: number;
+    schoolType?: string;
+    affiliation?: string;
+    foundingYear?: number;
+    masterPoints?: number;
+    doctoralPoints?: number;
+    nationalSpecialMajors?: string;
+    website?: string;
+    description?: string;
+  };
   stats: {
     majorCount: number;
     admissionDataCount: number;
@@ -51,6 +63,11 @@ interface UniversityDetail {
     minRank?: number;
     category: string;
     batch: string;
+    ranking?: {
+      rating?: string;
+      rank?: number;
+      score?: number;
+    };
   }>;
   scoreTrends: Array<{
     year: number;
@@ -116,15 +133,31 @@ const UniversityDetailPage = () => {
     );
   }
 
-  const { basicInfo, stats, majors, scoreTrends, admissionData } = university;
+  const { basicInfo, extendedInfo, stats, majors, scoreTrends, admissionData } = university;
 
   // 专业列表表格列
   const majorColumns: ColumnsType<typeof majors[0]> = [
-    { title: '专业名称', dataIndex: 'name', width: 250, fixed: 'left' as const },
-    { title: '专业代码', dataIndex: 'code', width: 120 },
-    { title: '科类', dataIndex: 'category', width: 100 },
-    { title: '批次', dataIndex: 'batch', width: 100 },
-    { title: '最低分数', dataIndex: 'minScore', width: 100, render: (v) => v || '-' },
+    { title: '专业名称', dataIndex: 'name', width: 200, fixed: 'left' as const },
+    { title: '专业代码', dataIndex: 'code', width: 100 },
+    { title: '科类', dataIndex: 'category', width: 80 },
+    { title: '批次', dataIndex: 'batch', width: 80 },
+    {
+      title: '评级',
+      dataIndex: 'ranking',
+      width: 80,
+      render: (ranking) => ranking?.rating ? (
+        <Tag color={ranking.rating === 'A+' ? 'red' : ranking.rating === 'A' ? 'orange' : 'blue'}>
+          {ranking.rating}
+        </Tag>
+      ) : '-'
+    },
+    {
+      title: '排名',
+      dataIndex: 'ranking',
+      width: 80,
+      render: (ranking) => ranking?.rank || '-'
+    },
+    { title: '最低分数', dataIndex: 'minScore', width: 90, render: (v) => v || '-' },
     { title: '最低位次', dataIndex: 'minRank', width: 100, render: (v) => v ? v.toLocaleString() : '-' }
   ];
 
@@ -230,13 +263,67 @@ const UniversityDetailPage = () => {
         <Col span={6}>
           <Card>
             <Statistic
-              title="院校层次"
-              value={basicInfo.is985 ? "顶尖" : basicInfo.is211 ? "重点" : "普通"}
-              valueStyle={{ color: basicInfo.is985 ? '#cf1322' : basicInfo.is211 ? '#fa541c' : '#13c2c2' }}
+              title="保研率"
+              value={extendedInfo?.postgraduateRate || 'N/A'}
+              suffix={extendedInfo?.postgraduateRate ? '%' : ''}
+              valueStyle={{ color: '#722ed1' }}
             />
           </Card>
         </Col>
       </Row>
+
+      {/* 扩展信息 */}
+      {extendedInfo && (
+        <Row gutter={16} style={{ marginBottom: 24 }}>
+          {extendedInfo.ranking && (
+            <Col span={6}>
+              <Card>
+                <Statistic
+                  title="全国排名"
+                  value={extendedInfo.ranking}
+                  valueStyle={{ color: '#1890ff' }}
+                />
+              </Card>
+            </Col>
+          )}
+          {extendedInfo.foundingYear && (
+            <Col span={6}>
+              <Card>
+                <Statistic
+                  title="建校年份"
+                  value={extendedInfo.foundingYear}
+                  suffix="年"
+                  valueStyle={{ color: '#13c2c2' }}
+                />
+              </Card>
+            </Col>
+          )}
+          {extendedInfo.masterPoints && (
+            <Col span={6}>
+              <Card>
+                <Statistic
+                  title="硕士点"
+                  value={extendedInfo.masterPoints}
+                  suffix="个"
+                  valueStyle={{ color: '#52c41a' }}
+                />
+              </Card>
+            </Col>
+          )}
+          {extendedInfo.doctoralPoints && (
+            <Col span={6}>
+              <Card>
+                <Statistic
+                  title="博士点"
+                  value={extendedInfo.doctoralPoints}
+                  suffix="个"
+                  valueStyle={{ color: '#fa541c' }}
+                />
+              </Card>
+            </Col>
+          )}
+        </Row>
+      )}
 
       {/* 详情标签页 */}
       <Card>
@@ -268,6 +355,34 @@ const UniversityDetailPage = () => {
                     <Tag color="default">否</Tag>
                   )}
                 </Descriptions.Item>
+                {extendedInfo?.schoolType && (
+                  <Descriptions.Item label="院校类型">{extendedInfo.schoolType}</Descriptions.Item>
+                )}
+                {extendedInfo?.affiliation && (
+                  <Descriptions.Item label="隶属关系">{extendedInfo.affiliation}</Descriptions.Item>
+                )}
+                {extendedInfo?.ranking && (
+                  <Descriptions.Item label="全国排名">{extendedInfo.ranking}</Descriptions.Item>
+                )}
+                {extendedInfo?.postgraduateRate && (
+                  <Descriptions.Item label="保研率">
+                    <Tag color="purple">{extendedInfo.postgraduateRate}%</Tag>
+                  </Descriptions.Item>
+                )}
+                {extendedInfo?.nationalSpecialMajors && (
+                  <Descriptions.Item label="国家特色专业" span={2}>
+                    <Text ellipsis style={{ maxWidth: 600 }}>
+                      {extendedInfo.nationalSpecialMajors}
+                    </Text>
+                  </Descriptions.Item>
+                )}
+                {extendedInfo?.website && (
+                  <Descriptions.Item label="官网" span={2}>
+                    <a href={extendedInfo.website} target="_blank" rel="noopener noreferrer">
+                      {extendedInfo.website}
+                    </a>
+                  </Descriptions.Item>
+                )}
               </Descriptions>
 
               <Divider />
@@ -298,10 +413,20 @@ const UniversityDetailPage = () => {
                 showSizeChanger: true,
                 showTotal: (total) => `共 ${total} 个专业`
               }}
-              scroll={{ x: 900 }}
+              scroll={{ x: 1100 }}
               size="small"
             />
           </TabPane>
+
+          {extendedInfo?.description && (
+            <TabPane tab="学校简介" key="description">
+              <Card>
+                <Paragraph style={{ fontSize: 16, lineHeight: 1.8, whiteSpace: 'pre-wrap' }}>
+                  {extendedInfo.description}
+                </Paragraph>
+              </Card>
+            </TabPane>
+          )}
 
           <TabPane tab={`录取数据 (${admissionData.length})`} key="admission">
             <Table

@@ -30,7 +30,7 @@ export interface SearchParams {
   minRank?: { min?: number; max?: number };
   year?: number[];
   category?: string;
-  subjectCategory?: string;
+  subjectCategory?: string | string[];
   batch?: string;
   is985?: boolean;
   is211?: boolean;
@@ -110,5 +110,26 @@ export interface AuthContextType {
 export interface LoginResponse {
   token: string;
   expiresIn: string;
+}
+
+// 目标院校接口
+export interface TargetUniversity extends AdmissionData {
+  order: number;        // 用户自定义排序顺序
+  addedAt: string;      // 添加时间（ISO 8601格式）
+}
+
+// 目标院校 Context 接口
+export interface TargetUniversitiesContextType {
+  targetUniversities: TargetUniversity[];
+  addTargetUniversity: (record: AdmissionData) => void;
+  batchAddTargetUniversities: (records: AdmissionData[]) => { addedCount: number; skippedCount: number };
+  removeTargetUniversity: (id: number) => void;
+  isTargetUniversity: (id: number) => boolean;
+  moveUp: (id: number) => void;
+  moveDown: (id: number) => void;
+  moveToTop: (id: number) => void;
+  moveToBottom: (id: number) => void;
+  clearAll: () => void;
+  exportToExcel: () => Promise<void>;
 }
 
