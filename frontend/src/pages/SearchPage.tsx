@@ -63,7 +63,10 @@ const SearchPage = () => {
     if (params.major) newParams.major = params.major;
     if (params.universityName) newParams.universityName = params.universityName;
     if (params.year && params.year.length > 0) newParams.year = params.year.join(',');
-    if (params.schoolLocation && params.schoolLocation.length > 0) newParams.schoolLocation = params.schoolLocation.join(',');
+    if (params.schoolLocation && params.schoolLocation.length > 0) {
+      const location = Array.isArray(params.schoolLocation) ? params.schoolLocation.join(',') : params.schoolLocation;
+      newParams.schoolLocation = location;
+    }
     if (params.category) newParams.category = params.category;
     if (params.batch) newParams.batch = params.batch;
     if (params.is985 !== undefined) newParams.is985 = String(params.is985);
@@ -240,7 +243,7 @@ const SearchPage = () => {
     message.success('已重置筛选条件');
   };
 
-  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
+  const handleTableChange = (pagination: any, sorter: any) => {
     const newPage = pagination.current;
     const newPageSize = pagination.pageSize;
 
