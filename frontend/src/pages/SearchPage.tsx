@@ -309,25 +309,15 @@ const SearchPage = () => {
               ))}
             </Select>
             <Select
-              placeholder="学科门类"
+              placeholder="科类"
               style={{ width: 150 }}
               allowClear
               value={currentParams.category}
               onChange={(value) => updateParam('category', value)}
             >
-              <Option value="哲学">哲学</Option>
-              <Option value="经济学">经济学</Option>
-              <Option value="法学">法学</Option>
-              <Option value="教育学">教育学</Option>
-              <Option value="文学">文学</Option>
-              <Option value="历史学">历史学</Option>
-              <Option value="理学">理学</Option>
-              <Option value="工学">工学</Option>
-              <Option value="农学">农学</Option>
-              <Option value="医学">医学</Option>
-              <Option value="管理学">管理学</Option>
-              <Option value="艺术学">艺术学</Option>
               <Option value="综合">综合</Option>
+              <Option value="体育类">体育类</Option>
+              <Option value="艺术类">艺术类</Option>
             </Select>
             <Select
               placeholder="是否985"
