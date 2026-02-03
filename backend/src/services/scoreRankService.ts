@@ -28,14 +28,16 @@ export async function getScoreRankMapping(year: number, score?: number, rank?: n
       // 将字符串转换为数字进行计算
       const validRecords = records
         .map(r => ({
-          score: typeof r.minScore === 'string' ? parseInt(r.minScore) : r.minScore,
-          rank: typeof r.minRank === 'string' ? parseInt(r.minRank) : r.minRank
+          score: r.minScore ? (typeof r.minScore === 'string' ? parseInt(r.minScore) : r.minScore) : 0,
+          rank: r.minRank ? (typeof r.minRank === 'string' ? parseInt(r.minRank) : r.minRank) : 0
         }))
-        .filter(r => !isNaN(r.score) && !isNaN(r.rank));
+        .filter(r => r.score !== null && r.rank !== null && !isNaN(r.score) && !isNaN(r.rank));
 
       // 找到最接近该分数的记录
       const closest = validRecords.reduce((prev, curr) => {
-        return Math.abs(curr.score - score) < Math.abs(prev.score - score) ? curr : prev;
+        const prevScore = prev.score ?? 0;
+        const currScore = curr.score ?? 0;
+        return Math.abs(currScore - score) < Math.abs(prevScore - score) ? curr : prev;
       }, validRecords[0]);
 
       if (closest) {
@@ -67,14 +69,16 @@ export async function getScoreRankMapping(year: number, score?: number, rank?: n
       // 将字符串转换为数字进行计算
       const validRecords = records
         .map(r => ({
-          score: typeof r.minScore === 'string' ? parseInt(r.minScore) : r.minScore,
-          rank: typeof r.minRank === 'string' ? parseInt(r.minRank) : r.minRank
+          score: r.minScore ? (typeof r.minScore === 'string' ? parseInt(r.minScore) : r.minScore) : 0,
+          rank: r.minRank ? (typeof r.minRank === 'string' ? parseInt(r.minRank) : r.minRank) : 0
         }))
-        .filter(r => !isNaN(r.score) && !isNaN(r.rank));
+        .filter(r => r.score !== null && r.rank !== null && !isNaN(r.score) && !isNaN(r.rank));
 
       // 找到最接近该位次的记录
       const closest = validRecords.reduce((prev, curr) => {
-        return Math.abs(curr.rank - rank) < Math.abs(prev.rank - rank) ? curr : prev;
+        const prevRank = prev.rank ?? 0;
+        const currRank = curr.rank ?? 0;
+        return Math.abs(currRank - rank) < Math.abs(prevRank - rank) ? curr : prev;
       }, validRecords[0]);
 
       if (closest) {
