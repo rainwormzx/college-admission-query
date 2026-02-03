@@ -109,10 +109,16 @@ async function callQwenAPI(messages: Array<{role: string; content: string}>): Pr
     throw new Error(`API请求失败: ${response.status} ${errorText}`);
   }
 
-  const data = await response.json();
+  const data = await response.json() as {
+    choices?: Array<{
+      message?: {
+        content?: string;
+      };
+    }>;
+  };
 
   if (data.choices && data.choices[0] && data.choices[0].message) {
-    return data.choices[0].message.content;
+    return data.choices[0].message.content || '';
   }
 
   throw new Error('API返回格式错误');
