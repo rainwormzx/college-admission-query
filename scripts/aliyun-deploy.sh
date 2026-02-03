@@ -127,7 +127,20 @@ DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME
 NODE_ENV=production
 PORT=3000
 CORS_ORIGIN=http://$SERVER_IP
+
+# 登录认证配置
+ACCESS_PASSWORD=your_secure_password_here
+JWT_SECRET=$(openssl rand -base64 32)
+JWT_EXPIRES_IN=24h
 EOF
+
+echo ""
+echo -e "${YELLOW}⚠️  重要提示：${NC}"
+echo "   - 已自动生成 JWT 密钥"
+echo "   - 默认访问密码为: your_secure_password_here"
+echo "   - 部署后请立即修改密码："
+echo "     vim /var/www/college-admission-query/backend/.env"
+echo ""
 
 # 安装依赖
 npm install

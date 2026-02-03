@@ -1,0 +1,72 @@
+/* 表格行悬停效果 */
+.ant-table-tbody > tr:hover > td {
+  background: #f0f5ff !important;
+  cursor: pointer;
+}
+
+.ant-table-tbody > tr > td {
+  transition: background 0.3s ease;
+}
+
+/* 标签样式优化 */
+.ant-tag {
+  transition: all 0.3s ease;
+}
+
+.ant-tag:hover {
+  transform: scale(1.05);
+}
+
+/* 搜索框样式 */
+.ant-input-affix-wrapper-lg,
+.ant-input-lg {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.ant-input-affix-wrapper-lg:hover,
+.ant-input-affix-wrapper-lg:focus,
+.ant-input-lg:hover,
+.ant-input-lg:focus {
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.2);
+  border-color: #1890ff;
+}
+
+/* 卡片样式 */
+.ant-card {
+  transition: all 0.3s ease;
+  border-radius: 12px;
+}
+
+.ant-card-head {
+  border-bottom: 2px solid #f0f0f0;
+}
+
+/* 分页器样式 */
+.ant-pagination-item {
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.ant-pagination-item:hover {
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+.ant-pagination-item-active {
+  background: #1890ff;
+  border-color: #1890ff;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .ant-table {
+    font-size: 12px;
+  }
+
+  .ant-tag {
+    fontSize: 11px;
+    padding: 0 6px;
+  }
+}

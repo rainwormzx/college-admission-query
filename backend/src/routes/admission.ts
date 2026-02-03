@@ -5,6 +5,7 @@ import { getRecommend } from '../services/recommendService';
 import { exportToExcel } from '../services/exportService';
 import { getCompare } from '../services/compareService';
 import { getScoreRankMapping } from '../services/scoreRankService';
+import { getUniversityByName, searchUniversities, getAllUniversities } from '../services/universityService';
 import prisma from '../utils/database';
 
 const router = Router();
@@ -132,6 +133,56 @@ router.get('/score-rank-mapping', async (req, res) => {
   } catch (error) {
     console.error('分数位次映射错误:', error);
     res.status(500).json({ error: '分数位次映射失败' });
+  }
+});
+
+// 高校详情接口
+router.get('/university/:name', async (req, res) => {
+  try {
+    const { name } = req.params;
+    const decodedName = decodeURIComponent(name);
+
+    const university = await getUniversityByName(decodedName);
+    if (!university) {
+      return res.status(404).json({ error: '未找到该高校信息' });
+    }
+
+    res.json(university);
+  } catch (error) {
+    console.error('获取高校详情错误:', error);
+    res.status(500).json({ error: '获取高校详情失败' });
+  }
+});
+
+// 高校搜索接口
+router.get('/universities/search', async (req, res) => {
+  try {
+    const { keyword } = req.query;
+    if (!keyword || typeof keyword !== 'string') {
+      return res.status(400).json({ error: '搜索关键词必填' });
+    }
+
+    const universities = await searchUniversities(keyword);
+    res.json(universities);
+  } catch (error) {
+    console.error('搜索高校错误:', error);
+    res.status(500).json({ error: '搜索失败' });
+  }
+});
+
+// 获取所有高校列表
+router.get('/universities', async (req, res) => {
+  try {
+    const { page = '1', pageSize = '50' } = req.query;
+
+    const result = await getAllUniversities(
+      Number(page),
+      Number(pageSize)
+    );
+    res.json(result);
+  } catch (error) {
+    console.error('获取高校列表错误:', error);
+    res.status(500).json({ error: '获取高校列表失败' });
   }
 });
 

@@ -96,3 +96,17 @@ export interface ScoreRankMapping {
   score?: number;
   rank?: number;
 }
+
+// 认证相关类型
+export interface AuthContextType {
+  isAuthenticated: boolean;
+  login: (password: string) => Promise<void>;
+  logout: () => void;
+  loading: boolean;
+}
+
+export interface LoginResponse {
+  token: string;
+  expiresIn: string;
+}
+

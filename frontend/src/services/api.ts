@@ -13,13 +13,51 @@ import type {
 
 const API_BASE_URL = '/api';
 
+// 获取 token
+const getToken = (): string | null => {
+  return sessionStorage.getItem('auth_token');
+};
+
+// 请求拦截器
+axios.interceptors.request.use(
+  (config) => {
+    const token = getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// 响应拦截器 - 处理 401
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      sessionStorage.removeItem('auth_token');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+// 登出
+export const logout = () => {
+  sessionStorage.removeItem('auth_token');
+};
+
 // 查询接口
 export const searchAdmission = async (
-  params: SearchParams
+  params: SearchParams,
+  signal?: AbortSignal
 ): Promise<SearchResponse> => {
   const response = await axios.post(
     `${API_BASE_URL}/admission/search`,
-    params
+    params,
+    { signal }
   );
   return response.data;
 };

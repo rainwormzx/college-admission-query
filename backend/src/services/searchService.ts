@@ -90,15 +90,22 @@ export const searchAdmission = async (params: SearchParams) => {
   }
 
   // 排序
-  const orderBy: any = {};
-  const sortFieldMap: { [key: string]: string } = {
-    minScore: 'minScore',
-    minRank: 'minRank',
-    year: 'year',
-    universityName: 'universityName'
-  };
-  const prismaField = sortFieldMap[sortBy] || 'minScore';
-  orderBy[prismaField] = sortOrder;
+  let orderBy: any = {};
+  if (sortBy && sortOrder) {
+    const sortFieldMap: { [key: string]: string } = {
+      minScore: 'minScore',
+      minRank: 'minRank',
+      year: 'year',
+      universityName: 'universityName',
+      major: 'major',
+      schoolLocation: 'schoolLocation'
+    };
+    const prismaField = sortFieldMap[sortBy] || 'minScore';
+    orderBy[prismaField] = sortOrder;
+  } else {
+    // 默认按分数降序
+    orderBy = { minScore: 'desc' as const };
+  }
 
   // 分页查询
   const [data, total] = await Promise.all([

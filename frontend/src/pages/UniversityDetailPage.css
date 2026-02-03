@@ -1,0 +1,81 @@
+.university-header-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+}
+
+.university-header-card .ant-card-body {
+  color: white;
+}
+
+.university-header-card h2.ant-typography,
+.university-header-card .ant-typography h2 {
+  color: white !important;
+}
+
+.university-header-card .ant-tag {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.university-code {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.university-code .ant-typography {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.overview-section .ant-descriptions {
+  background: white;
+}
+
+.overview-section .ant-descriptions-item-label {
+  background: #fafafa;
+  font-weight: 600;
+}
+
+/* 表格样式优化 */
+.ant-table-small .ant-table-thead > tr > th {
+  background: #f0f2f5;
+  font-weight: 600;
+}
+
+.ant-table-row:hover {
+  background: #f5f5f5;
+}
+
+/* 统计卡片动画 */
+.ant-statistic {
+  transition: transform 0.3s ease;
+}
+
+.ant-card:hover .ant-statistic {
+  transform: translateY(-4px);
+}
+
+/* 标签页样式 */
+.ant-tabs-tab {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.ant-tabs-tab-active {
+  font-weight: 600;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .university-header-card .ant-row {
+    flex-direction: column;
+  }
+
+  .university-code {
+    text-align: center !important;
+    margin-top: 16px;
+  }
+}

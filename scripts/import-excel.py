@@ -32,7 +32,7 @@ DB_CONFIG = {
 }
 
 # Excel文件路径
-EXCEL_FILE = '../22-25年全国高校在浙江的专业录取分数.xlsx'
+EXCEL_FILE = '../22-25scoredata.xlsx'
 
 
 def clean_value(value):

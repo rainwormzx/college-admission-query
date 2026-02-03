@@ -2,6 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import admissionRouter from './routes/admission';
+import aiRouter from './routes/ai';
+import authRouter from './routes/auth';
+import { authMiddleware } from './middleware/auth';
 
 dotenv.config();
 
@@ -16,7 +19,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // 路由
-app.use('/api/admission', admissionRouter);
+// 认证路由（不需要认证中间件）
+app.use('/api/auth', authRouter);
+
+// 受保护的路由（需要认证）
+app.use('/api/admission', authMiddleware, admissionRouter);
+app.use('/api/ai', authMiddleware, aiRouter);
 
 // 健康检查
 app.get('/health', (req, res) => {
