@@ -1,5 +1,3 @@
-import Anthropic from '@anthropic-ai/sdk';
-
 // 志愿填报知识库系统提示词
 const VOLUNTEER_SYSTEM_PROMPT = `你是一位专业的高考志愿填报顾问，拥有丰富的教育咨询经验。你的职责是根据学生的情况，提供专业、准确的志愿填报建议。
 
@@ -65,10 +63,6 @@ const VOLUNTEER_SYSTEM_PROMPT = `你是一位专业的高考志愿填报顾问�
 
 请以专业、友好、耐心的态度回答学生的问题。`;
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY || ''
-});
-
 interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
@@ -80,6 +74,48 @@ interface ChatRequest {
   rank?: number;
   province?: string;
   category?: string;
+}
+
+// 使用阿里云通义千问API
+async function callQwenAPI(messages: Array<{role: string; content: string}>): Promise<string> {
+  const apiKey = process.env.DASHSCOPE_API_KEY;
+
+  if (!apiKey) {
+    throw new Error('未配置阿里云API密钥，请在环境变量中设置DASHSCOPE_API_KEY');
+  }
+
+  const response = await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model: 'qwen-plus', // 使用通义千问-plus模型
+      messages: [
+        {
+          role: 'system',
+          content: VOLUNTEER_SYSTEM_PROMPT
+        },
+        ...messages
+      ],
+      max_tokens: 2000,
+      temperature: 0.7
+    })
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`API请求失败: ${response.status} ${errorText}`);
+  }
+
+  const data = await response.json();
+
+  if (data.choices && data.choices[0] && data.choices[0].message) {
+    return data.choices[0].message.content;
+  }
+
+  throw new Error('API返回格式错误');
 }
 
 export async function getAIResponse(request: ChatRequest): Promise<string> {
@@ -97,34 +133,25 @@ export async function getAIResponse(request: ChatRequest): Promise<string> {
     ? `${contextInfo}\n\n用户问题：${messages[messages.length - 1].content}`
     : messages[messages.length - 1].content;
 
-  try {
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 2000,
-      system: VOLUNTEER_SYSTEM_PROMPT,
-      messages: [
-        ...messages.slice(0, -1).map((msg) => ({
-          role: msg.role,
-          content: msg.content
-        })),
-        {
-          role: 'user',
-          content: userMessage
-        }
-      ]
-    });
-
-    const content = response.content[0];
-    if (content.type === 'text') {
-      return content.text;
+  // 构建消息历史
+  const apiMessages = [
+    ...messages.slice(0, -1).map((msg) => ({
+      role: msg.role,
+      content: msg.content
+    })),
+    {
+      role: 'user',
+      content: userMessage
     }
+  ];
 
-    return '抱歉，我无法生成回复。';
+  try {
+    return await callQwenAPI(apiMessages);
   } catch (error) {
     console.error('AI API Error:', error);
     if (error instanceof Error) {
-      if (error.message.includes('API key')) {
-        return 'AI服务配置错误：缺少有效的API密钥。请联系管理员配置Anthropic API Key。';
+      if (error.message.includes('API密钥') || error.message.includes('API key')) {
+        return 'AI服务配置错误：缺少有效的API密钥。请联系管理员配置阿里云DashScope API Key。';
       }
       return `AI服务暂时不可用：${error.message}`;
     }
