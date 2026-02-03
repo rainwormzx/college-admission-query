@@ -103,6 +103,7 @@ export const searchAdmission = async (params: SearchParams) => {
       universityName: 'universityName',
       major: 'major',
       category: 'category',
+      subjectCategory: 'subjectCategory',
       batch: 'batch',
       subjectRequirement: 'subjectRequirement',
       minScore: 'minScore',

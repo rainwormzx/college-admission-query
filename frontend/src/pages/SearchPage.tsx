@@ -184,7 +184,7 @@ const SearchPage = () => {
       )
     },
     { title: '专业', dataIndex: 'major', width: 180, sorter: true },
-    { title: '学科门类', dataIndex: 'category', width: 90, sorter: true },
+    { title: '学科门类', dataIndex: 'subjectCategory', width: 90, sorter: true, render: (text: string | null) => text || '-' },
     { title: '批次', dataIndex: 'batch', width: 110, sorter: true },
     { title: '选科要求', dataIndex: 'subjectRequirement', width: 120, sorter: true },
     {
@@ -309,17 +309,6 @@ const SearchPage = () => {
               {locations.map((loc) => (
                 <Option key={loc} value={loc}>{loc}</Option>
               ))}
-            </Select>
-            <Select
-              placeholder="科类"
-              style={{ width: 120 }}
-              allowClear
-              value={currentParams.category}
-              onChange={(value) => updateParam('category', value)}
-            >
-              <Option value="综合">综合</Option>
-              <Option value="体育类">体育类</Option>
-              <Option value="艺术类">艺术类</Option>
             </Select>
             <Select
               placeholder="学科门类"
