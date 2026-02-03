@@ -139,8 +139,8 @@ export async function getUniversityByName(name: string): Promise<UniversityDetai
     majors: uniqueMajors.map(m => ({
       name: m.major,
       code: m.majorCode || '-',
-      minScore: m.minScore,
-      minRank: m.minRank,
+      minScore: m.minScore ?? undefined,
+      minRank: m.minRank ?? undefined,
       category: m.category,
       batch: m.batch
     })),
@@ -153,8 +153,8 @@ export async function getUniversityByName(name: string): Promise<UniversityDetai
     admissionData: admissionDataData.map(d => ({
       year: d.year,
       major: d.major,
-      minScore: d.minScore,
-      minRank: d.minRank,
+      minScore: d.minScore ?? undefined,
+      minRank: d.minRank ?? undefined,
       category: d.category,
       batch: d.batch
     }))
