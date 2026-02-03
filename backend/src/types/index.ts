@@ -18,6 +18,7 @@ export interface AdmissionData {
   schoolNature: string;
   is985: boolean;
   is211: boolean;
+  subjectCategory: string | null;
 }
 
 // 查询参数类型
@@ -29,6 +30,7 @@ export interface SearchParams {
   minRank?: { min?: number; max?: number };
   year?: number[];
   category?: string;
+  subjectCategory?: string;
   batch?: string;
   is985?: boolean;
   is211?: boolean;

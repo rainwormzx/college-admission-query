@@ -38,6 +38,7 @@ const SearchPage = () => {
       year: searchParams.get('year')?.split(',').map(Number).filter(Boolean) || undefined,
       schoolLocation: searchParams.get('schoolLocation')?.split(',').filter(Boolean) || undefined,
       category: searchParams.get('category') || undefined,
+      subjectCategory: searchParams.get('subjectCategory') || undefined,
       batch: searchParams.get('batch') || undefined,
       is985: searchParams.get('is985') === 'true' ? true : searchParams.get('is985') === 'false' ? false : undefined,
       is211: searchParams.get('is211') === 'true' ? true : searchParams.get('is211') === 'false' ? false : undefined,
@@ -68,6 +69,7 @@ const SearchPage = () => {
       newParams.schoolLocation = location;
     }
     if (params.category) newParams.category = params.category;
+    if (params.subjectCategory) newParams.subjectCategory = params.subjectCategory;
     if (params.batch) newParams.batch = params.batch;
     if (params.is985 !== undefined) newParams.is985 = String(params.is985);
     if (params.is211 !== undefined) newParams.is211 = String(params.is211);
@@ -310,7 +312,7 @@ const SearchPage = () => {
             </Select>
             <Select
               placeholder="科类"
-              style={{ width: 150 }}
+              style={{ width: 120 }}
               allowClear
               value={currentParams.category}
               onChange={(value) => updateParam('category', value)}
@@ -318,6 +320,27 @@ const SearchPage = () => {
               <Option value="综合">综合</Option>
               <Option value="体育类">体育类</Option>
               <Option value="艺术类">艺术类</Option>
+            </Select>
+            <Select
+              placeholder="学科门类"
+              style={{ width: 120 }}
+              allowClear
+              value={currentParams.subjectCategory}
+              onChange={(value) => updateParam('subjectCategory', value)}
+            >
+              <Option value="哲学">哲学</Option>
+              <Option value="经济学">经济学</Option>
+              <Option value="法学">法学</Option>
+              <Option value="教育学">教育学</Option>
+              <Option value="文学">文学</Option>
+              <Option value="历史学">历史学</Option>
+              <Option value="理学">理学</Option>
+              <Option value="工学">工学</Option>
+              <Option value="农学">农学</Option>
+              <Option value="医学">医学</Option>
+              <Option value="管理学">管理学</Option>
+              <Option value="艺术学">艺术学</Option>
+              <Option value="综合">综合</Option>
             </Select>
             <Select
               placeholder="是否985"

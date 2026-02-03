@@ -26,11 +26,13 @@ model AdmissionData {
   schoolNature        String   @map("school_nature")
   is985               Boolean  @map("is_985")
   is211               Boolean  @map("is_211")
+  subjectCategory     String?  @map("subject_category")
 
   @@index([year])
   @@index([major])
   @@index([schoolLocation])
   @@index([minScore])
   @@index([universityName])
+  @@index([subjectCategory])
   @@map("admission_data")
 }

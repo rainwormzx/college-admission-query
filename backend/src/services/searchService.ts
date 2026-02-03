@@ -10,6 +10,7 @@ export const searchAdmission = async (params: SearchParams) => {
     minRank,
     year,
     category,
+    subjectCategory,
     batch,
     is985,
     is211,
@@ -69,9 +70,14 @@ export const searchAdmission = async (params: SearchParams) => {
     };
   }
 
-  // 科类
+  // 科类（浙江高考分类）
   if (category) {
     where.category = category;
+  }
+
+  // 学科门类（教育部13类）
+  if (subjectCategory) {
+    where.subjectCategory = subjectCategory;
   }
 
   // 批次
@@ -140,7 +146,8 @@ export const searchAdmission = async (params: SearchParams) => {
     schoolLocation: item.schoolLocation,
     schoolNature: item.schoolNature,
     is985: item.is985,
-    is211: item.is211
+    is211: item.is211,
+    subjectCategory: item.subjectCategory
   }));
 
   return {
