@@ -243,7 +243,7 @@ const SearchPage = () => {
     message.success('已重置筛选条件');
   };
 
-  const handleTableChange = (pagination: any, sorter: any) => {
+  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
     const newPage = pagination.current;
     const newPageSize = pagination.pageSize;
 
@@ -251,8 +251,8 @@ const SearchPage = () => {
       ...currentParams,
       page: newPage,
       pageSize: newPageSize,
-      sortBy: sorter.field,
-      sortOrder: sorter.order === 'ascend' ? 'asc' : sorter.order === 'descend' ? 'desc' : undefined
+      sortBy: sorter?.field,
+      sortOrder: sorter?.order === 'ascend' ? 'asc' : sorter?.order === 'descend' ? 'desc' : undefined
     };
 
     updateQueryParams(newParams);
