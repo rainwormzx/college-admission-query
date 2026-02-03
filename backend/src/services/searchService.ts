@@ -93,11 +93,14 @@ export const searchAdmission = async (params: SearchParams) => {
   let orderBy: any = {};
   if (sortBy && sortOrder) {
     const sortFieldMap: { [key: string]: string } = {
-      minScore: 'minScore',
-      minRank: 'minRank',
       year: 'year',
       universityName: 'universityName',
       major: 'major',
+      category: 'category',
+      batch: 'batch',
+      subjectRequirement: 'subjectRequirement',
+      minScore: 'minScore',
+      minRank: 'minRank',
       schoolLocation: 'schoolLocation'
     };
     const prismaField = sortFieldMap[sortBy] || 'minScore';
