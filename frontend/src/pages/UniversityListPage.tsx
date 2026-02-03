@@ -50,6 +50,10 @@ const UniversityListPage = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
   const [searchOptions, setSearchOptions] = useState<{ value: string }[]>([]);
+  // 预留筛选功能（暂时未实际使用）
+  const [, setLocationFilter] = useState<string | undefined>();
+  const [, setNatureFilter] = useState<string | undefined>();
+  const [, setLevelFilter] = useState<string | undefined>();
 
   useEffect(() => {
     fetchUniversities();
