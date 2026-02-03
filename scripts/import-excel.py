@@ -27,8 +27,8 @@ DB_CONFIG = {
     'host': 'localhost',
     'port': 5432,
     'database': 'admission_query',
-    'user': 'postgres',
-    'password': 'rainworm'
+    'user': 'rainworm',
+    'password': 'Admission2024!'
 }
 
 # Excel文件路径
